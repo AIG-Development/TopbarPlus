@@ -1,3 +1,4 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 -- As the name suggests, this handles everything related to gamepads
 -- (i.e. Xbox or Playstation controllers) and their navigation
 -- I created a separate module for gamepads (and not touchpads or
@@ -7,11 +8,11 @@
 
 
 -- SERVICES
+local Knit = require(ReplicatedStorage.Utility.KnitFramework.Knit)
 local GamepadService = game:GetService("GamepadService")
 local UserInputService = game:GetService("UserInputService")
 local GuiService = game:GetService("GuiService")
-
-
+local UIController = Knit.GetController("UIController")
 
 -- LOCAL
 local Gamepad = {}
@@ -104,7 +105,9 @@ function Gamepad.start(incomingIcon)
 		-- This allows for easy highlighting of the topbar when the
 		-- when ``Icon.highlightKey`` (i.e. DPadUp) is pressed.
 		-- If you'd like to disable, do ``Icon.highlightKey = false``
+
 		UserInputService.InputBegan:Connect(function(input, touchingAnObject)
+			if UIController:CheckIfLoaded("CreativeMode") then return end
 			if input.UserInputType == Enum.UserInputType.MouseButton1 then
 				-- Sometimes the Roblox gamepad glitches when combined with a cursor
 				-- This fixes that by unhighlighting if the cursor is pressed down
@@ -168,7 +171,9 @@ function Gamepad.registerButton(buttonInstance)
 		task.wait()
 		inputBegan = false
 	end)
+
 	local connection = UserInputService.InputBegan:Connect(function(input)
+		if UIController:CheckIfLoaded("CreativeMode") then return end
 		task.wait()
 		if input.KeyCode == Enum.KeyCode.ButtonA and inputBegan then
 			-- We focus on an icon when selected via the virtual cursor
